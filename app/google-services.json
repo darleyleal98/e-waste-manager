@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "153951661584",
+    "project_id": "ewastemanager-8eeb7",
+    "storage_bucket": "ewastemanager-8eeb7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:153951661584:android:7841dc31dac60a8d01e495",
+        "android_client_info": {
+          "package_name": "com.darleyleal.ewastemanager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMycLI5bxRbb08FXDVBwAIZa1hQ9973ks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

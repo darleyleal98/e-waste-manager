@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">eWasteManager</string>
+    <string name="logo_app">e-Waste Manager</string>
+    <string name="entrar">Entrar</string>
+    <string name="novo_cadastro">"Ainda não é cadastrado? Cadastre-se!"</string>
+    <string name="personal_e_mail">Personal e-mail</string>
+    <string name="hide_password">Hide password</string>
+    <string name="cadastrar_nova_conta">Cadastrar nova conta</string>
+    <string name="error_message">Error message</string>
+</resources>
