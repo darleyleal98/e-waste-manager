@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -51,9 +52,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.firebase.auth)
-    implementation(libs.androidx.runtime.livedata)
-    implementation(libs.firebase.crashlytics.buildtools)
     val nav_version = "2.8.0"
     val lifecycle_version = "2.8.5"
 
@@ -62,9 +60,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
-    implementation("androidx.compose.material:material-icons-extended:1.3.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
-    implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
@@ -75,9 +70,24 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.firebase.auth)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.firebase.crashlytics.buildtools)
 
-    // Import the BoM for the Firebase platform
+    implementation("androidx.compose.material:material-icons-extended:1.3.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
+    implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation(platform("com.google.firebase:firebase-bom:31.0.0"))
-
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.compose.material3:material3:1.2.0-alpha02")
+    implementation("com.google.dagger:hilt-android:2.45")
+
+    val room_version = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:2.6.1")
+
+    ksp("androidx.room:room-compiler:2.6.1")
 }

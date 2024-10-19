@@ -1,5 +1,6 @@
 package com.darleyleal.ewastemanager.view.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Visibility
@@ -16,9 +18,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,9 +42,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.darleyleal.ewastemanager.R
+import com.darleyleal.ewastemanager.constants.AppContants
+import com.darleyleal.ewastemanager.constants.AppRoutes
 import com.darleyleal.ewastemanager.view.components.AppTextButton
 import com.darleyleal.ewastemanager.view.components.EWasteNameAndIconApp
-import com.darleyleal.ewastemanager.viewmodel.AuthViewModel
+import com.darleyleal.ewastemanager.viewModel.AuthViewModel
 
 @Preview(showBackground = true)
 @Composable
@@ -66,19 +72,48 @@ fun LoginScreen(
     ) {
         EWasteNameAndIconApp()
 
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
         var showPasword by remember { mutableStateOf(value = false) }
+
+        var emailIsValid = authViewModel.emailIsValid
+        var passwordIsValid = authViewModel.passwordIsValid
+
+        val loginResult by authViewModel.loginResult.collectAsState()
 
         val context = LocalContext.current
 
+        loginResult?.let {
+            if (it) {
+                Toast.makeText(
+                    context,
+                    AppContants.USER_REGISTERED_SUCCESSFULLY, Toast.LENGTH_SHORT
+                ).show()
+                navController.navigate(AppRoutes.HOME)
+                authViewModel.resetLoginResult()
+            } else {
+                Toast.makeText(
+                    context, AppContants.INCORRET_USER,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         TextField(
-            value = email,
+            value = authViewModel.email,
             onValueChange = {
-                email = it
+                authViewModel.email = it
+            },
+            isError = !emailIsValid || authViewModel.email.isEmpty(),
+            supportingText = {
+                if (!emailIsValid) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = authViewModel.emailError,
+                        color = MaterialTheme.colorScheme.onError
+                    )
+                }
             },
             label = {
-                Text("E-mail")
+                Text("E-mail", color = Color.Cyan)
             },
             leadingIcon = {
                 Icon(
@@ -86,15 +121,38 @@ fun LoginScreen(
                     contentDescription = stringResource(R.string.personal_e_mail)
                 )
             },
+            trailingIcon = {
+                if (!emailIsValid) {
+                    Icon(
+                        Icons.Filled.Error,
+                        tint = MaterialTheme.colorScheme.error,
+                        contentDescription = stringResource(R.string.error_message)
+                    )
+                }
+            },
             modifier = modifier
                 .fillMaxWidth()
                 .padding(top = 64.dp, start = 16.dp, end = 16.dp),
         )
 
         TextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Senha") },
+            value = authViewModel.password,
+            onValueChange = {
+                authViewModel.password = it
+            },
+            isError = !passwordIsValid,
+            supportingText = {
+                if (!passwordIsValid) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = authViewModel.passwordError,
+                        color = MaterialTheme.colorScheme.onError
+                    )
+                }
+            },
+            label = {
+                Text("Senha", color = Color.Cyan)
+            },
             visualTransformation = if (showPasword) {
                 VisualTransformation.None
             } else {
@@ -105,20 +163,36 @@ fun LoginScreen(
                 Icon(Icons.Default.Lock, contentDescription = "Personal password")
             },
             trailingIcon = {
-                if (showPasword) {
-                    IconButton(onClick = { showPasword = false }) {
-                        Icon(
-                            imageVector = Icons.Filled.Visibility,
-                            contentDescription = stringResource(R.string.hide_password)
-                        )
+                when {
+                    showPasword -> {
+                        IconButton(onClick = { showPasword = false }) {
+                            Icon(
+                                imageVector = Icons.Filled.Visibility,
+                                tint = Color.White,
+                                contentDescription = stringResource(R.string.hide_password)
+                            )
+                        }
                     }
-                } else {
-                    IconButton(
-                        onClick = { showPasword = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.VisibilityOff,
-                            contentDescription = stringResource(R.string.hide_password)
-                        )
+
+                    !passwordIsValid -> {
+                        IconButton(onClick = { !emailIsValid || !passwordIsValid }) {
+                            Icon(
+                                Icons.Filled.Error,
+                                tint = MaterialTheme.colorScheme.error,
+                                contentDescription = stringResource(R.string.error_message)
+                            )
+                        }
+                    }
+
+                    else -> {
+                        IconButton(
+                            onClick = { showPasword = true }) {
+                            Icon(
+                                imageVector = Icons.Filled.VisibilityOff,
+                                tint = Color.White,
+                                contentDescription = stringResource(R.string.hide_password)
+                            )
+                        }
                     }
                 }
             },
@@ -128,7 +202,7 @@ fun LoginScreen(
         )
         Button(
             onClick = {
-
+                authViewModel.signIn()
             },
             colors = ButtonDefaults.buttonColors(Color(0xFF32CD32)),
             modifier = modifier

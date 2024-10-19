@@ -7,4 +7,16 @@
     <string name="hide_password">Hide password</string>
     <string name="cadastrar_nova_conta">Cadastrar nova conta</string>
     <string name="error_message">Error message</string>
+    <string name="icone_de_pesquisa">Icone de pesquisa</string>
+    <string name="icone_de_fechar">Icone de fechar</string>
+    <string name="nome_do_usuario">Nome do usuário</string>
+    <string name="numero_de_telefone">Número de Telefone</string>
+    <string name="setor_de_trabalho">Setor de trabalho</string>
+    <string name="tipo_do_equipamento">Tipo do equipamento</string>
+    <string name="numero_de_serie">Número de série</string>
+    <string name="voltagem_do_equipamento">Voltagem do equipamento</string>
+    <string name="fabricante_do_equipamento">Fabricante do equipamento</string>
+    <string name="descricao">Descrição</string>
+    <string name="salvar">Salvar</string>
+    <string name="status_do_equipamento">Status do equipamento</string>
 </resources>

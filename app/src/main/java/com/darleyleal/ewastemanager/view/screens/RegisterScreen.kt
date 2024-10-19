@@ -23,6 +23,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,7 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.darleyleal.ewastemanager.R
 import com.darleyleal.ewastemanager.constants.AppContants
-import com.darleyleal.ewastemanager.viewmodel.AuthViewModel
+import com.darleyleal.ewastemanager.viewModel.AuthViewModel
 
 @SuppressLint("UnrememberedMutableState")
 @Preview(showSystemUi = true, showBackground = true)
@@ -76,13 +78,14 @@ fun RegisterScreen(
         var emailIsValid = authViewModel.emailIsValid
         var passwordIsValid = authViewModel.passwordIsValid
         val context = LocalContext.current
+        val createUserResult by authViewModel.createUserResult.collectAsState()
 
         TextField(
             value = authViewModel.email,
             onValueChange = {
                 authViewModel.email = it
             },
-            isError = !emailIsValid || authViewModel.email.isNotEmpty(),
+            isError = !emailIsValid || authViewModel.email.isEmpty(),
             supportingText = {
                 if (!emailIsValid) {
                     Text(
@@ -93,7 +96,7 @@ fun RegisterScreen(
                 }
             },
             label = {
-                Text("E-mail", color = Color.Black)
+                Text("E-mail", color = Color.Cyan)
             },
             leadingIcon = {
                 Icon(
@@ -130,7 +133,7 @@ fun RegisterScreen(
                     )
                 }
             },
-            label = { Text("Senha", color = Color.Black) },
+            label = { Text("Senha", color = Color.Cyan) },
             visualTransformation = if (showPassword) {
                 VisualTransformation.None
             } else {
@@ -146,7 +149,7 @@ fun RegisterScreen(
                         IconButton(onClick = { showPassword = false }) {
                             Icon(
                                 imageVector = Icons.Filled.Visibility,
-                                tint = Color.Black,
+                                tint = Color.White,
                                 contentDescription = stringResource(R.string.hide_password)
                             )
                         }
@@ -167,7 +170,7 @@ fun RegisterScreen(
                             onClick = { showPassword = true }) {
                             Icon(
                                 imageVector = Icons.Filled.VisibilityOff,
-                                tint = Color.Black,
+                                tint = Color.White,
                                 contentDescription = stringResource(R.string.hide_password)
                             )
                         }
@@ -180,23 +183,7 @@ fun RegisterScreen(
         )
         Button(
             onClick = {
-                when {
-                    authViewModel.validateFields() -> {
-                        authViewModel.createUser()
-                        Toast.makeText(
-                            context, AppContants.USER_REGISTERED_SUCCESSFULLY,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        navController.navigate("home")
-                    }
-
-                    else -> {
-                        Toast.makeText(
-                            context, AppContants.ADD_ON_FAILURE_LISTENER,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+                authViewModel.createUser()
             },
             colors = ButtonDefaults.buttonColors(Color(0xFF32CD32)),
             modifier = modifier
@@ -208,6 +195,24 @@ fun RegisterScreen(
                 fontSize = 20.sp,
                 style = TextStyle(color = Color.White)
             )
+
+            LaunchedEffect(createUserResult) {
+                createUserResult?.let {
+                    if (it) {
+                        Toast.makeText(
+                            context,
+                            AppContants.USER_REGISTERED_SUCCESSFULLY, Toast.LENGTH_SHORT
+                        ).show()
+                        navController.navigate("home")
+                        authViewModel.resetCreateUser()
+                    } else {
+                        Toast.makeText(
+                            context, AppContants.ON_FAILURE_AT_USER,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
     }
 }
